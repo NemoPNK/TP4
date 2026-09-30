@@ -7,6 +7,7 @@ const pool = new Pool({
     port: 5432,
     user: 'ekod',
     password: 'ekod',
+    database: 'tasks'
 });
 
 app.use(express.json());
@@ -32,11 +33,12 @@ app.post('/api/tasks', (req, res) => {
     });
 });
 
-app.get('/api/tasks', (req, res) => {
-    console.log("Task : ", MyTasks)
+app.get('/api/tasks', async (req, res) => {
+    const result = await pool.query('SELECT * FROM tasks');
+
     res.status(200).json({
         message: 'Get ok',
-        task: MyTasks
+        task: result.rows
     });
 });
 
