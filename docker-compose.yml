@@ -6,10 +6,15 @@ services:
       POSTGRES_PASSWORD: ekod
       POSTGRES_DB: tasks
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
       - ./db-init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
 
   api:
+    build: .
+    ports:
+      - "3000:3000"
 
 volumes:
   postgres_data:

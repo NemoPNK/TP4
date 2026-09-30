@@ -22,9 +22,12 @@ app.listen(port, () => {
 
 // Routes API
 
-app.post('/api/tasks', (req, res) => {
+app.post('/api/tasks', async (req, res) => {
     const newTask = req.body;
-    MyTasks.push(newTask);
+    await pool.query(
+        'INSERT INTO tasks (id, titre, complete) VALUES ($1, $2, $3)',
+        [newTask.id, newTask.titre, newTask.complete]
+    );
 
     console.log("Task : ", newTask)
     res.status(201).json({
@@ -35,6 +38,7 @@ app.post('/api/tasks', (req, res) => {
 
 app.get('/api/tasks', async (req, res) => {
     const result = await pool.query('SELECT * FROM tasks');
+    console.log(result.rows);
 
     res.status(200).json({
         message: 'Get ok',
@@ -42,44 +46,49 @@ app.get('/api/tasks', async (req, res) => {
     });
 });
 
-app.put('/api/tasks/:id', (req, res) => {
+app.put('/api/tasks/:id', async (req, res) => {
     const taskID = req.params.id;
     const putTask = req.body;
-    const task = MyTasks.find(task => task.id === Number(taskID))
 
-    task.id = req.body;
-    task.complété = req.body;
-    task.titre = req.body;
+    const result = await pool.query(
+        'UPDATE tasks SET titre = $1, complete = $2 WHERE id = $3 RETURNING *',
+        [putTask.titre, putTask.complete, taskID]
+    );
 
     res.status(200).json({
         message: 'Put ok',
-        task: task
+        task: result.rows[0]
     });
 });
 
-app.delete('/api/tasks/:id', (req, res) => {
+app.delete('/api/tasks/:id', async (req, res) => {
     const taskID = req.params.id;
-    const task = MyTasks.findIndex(task => task.id === Number(taskID))
-    MyTasks.splice(task, 1);
+
+    const result = await pool.query(
+        'DELETE FROM tasks WHERE id = $1 RETURNING *',
+        [taskID]
+    );
 
     res.status(200).json({
         message: 'Delete ok',
-        task: task
+        task: result.rows[0]
     });
-})
+});
 
 // Fonctionnalité A : marquer une tache complétée
-app.patch('/api/tasks/:id', (req, res) => {
+app.patch('/api/tasks/:id', async (req, res) => {
     const taskID = req.params.id;
-    const task = MyTasks.find(task => task.id === Number(taskID))
 
-    task.complété = true;
+    const result = await pool.query(
+        'UPDATE tasks SET complete = TRUE WHERE id = $1 RETURNING *',
+        [taskID]
+    );
 
     res.status(200).json({
-        message: 'tache complétée',
-        task: task
+        message: 'Patch ok',
+        task: result.rows[0]
     });
-})
+});
 
 // Tableau
 
