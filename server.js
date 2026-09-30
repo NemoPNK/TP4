@@ -89,13 +89,3 @@ app.patch('/api/tasks/:id', async (req, res) => {
         task: result.rows[0]
     });
 });
-
-// Tableau
-
-const MyTasks = [
-    { id: 0, complété: true, titre: "monter" },
-    { id: 1, complété: false, titre: "up" },
-    { id: 2, complété: false, titre: "down" },
-    { id: 3, complété: false, titre: "boom" },
-    { id: 4, complété: false, titre: "bam" }
-];
