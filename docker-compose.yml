@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ekod
+      POSTGRES_PASSWORD: ekod
+      POSTGRES_DB: tasks
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+
+  api:
+
+volumes:
+  postgres_data:
