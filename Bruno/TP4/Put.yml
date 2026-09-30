@@ -1,0 +1,21 @@
+info:
+  name: Put
+  type: http
+
+http:
+  method: PUT
+  url: http://localhost:3000/api/tasks/4
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "NewOnee",
+        "complete": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
